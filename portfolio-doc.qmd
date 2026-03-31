@@ -1,0 +1,268 @@
+---
+title: "Constructing a Portfolio from Scratch"
+format: html
+execute:
+  echo: false
+---
+
+The following document serves as a way to document my own thought process towards constructing a portfolio starting with 100% cash. I am using this document to force myself to articulate in words why and how I am investing in the way I am, rather than just vibes.
+
+## Goals & Purpose
+- Mostly buy and hold
+    - I do not have the time to look at the market 24/7 and react to things
+        - If I did anyway, I'd probably perform worse
+    - I want to have an outlook where I cash out no earlier than 5 years from now
+
+## Constraints
+
+- I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
+- No use of margin at all
+    - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
+        - e.g. let's say you bought a stock purely on margin for $\$1,000$. After one year, you sell this stock. You automatically owe $\$118.25$ in interest which means that a:
+            - $20\%$ gain ($\$1,200$): $\$1,200 - \$1,000 - \$118.25 =  \textcolor{green}{\$81.75}$
+            - $11.825\%$ gain ($\$1,118.25$): $\$1,118.25 - \$1,000 - \$118.25 =  \$0$
+            - $0\%$ gain ($\$1,000$): $\$1,000 - \$1,000 - \$118.25 =  \textcolor{red}{-\$118.25}$
+            - $-5\%$ loss ($\$950$): $\$950 - \$1,000 - \$118.25 =  \textcolor{red}{-\$168.25}$
+            - $-20\%$ loss ($\$800$): $\$800 - \$1,000 - \$118.25 =  \textcolor{red}{-\$318.25}$
+        - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means that your stock would need to outperform the market just to see a profit.
+        - It's a terrible deal
+
+## Beliefs & Principles
+
+### It's always a good time to invest
+
+Despite how ugly things in the world may seem, it is difficult to argue against putting money into the market long term ([source](https://www.macrotrends.net/datasets/1319/dow-jones-100-year-historical-chart)).
+
+Try any of the presets, or choose your own dates
+
+```{=html}
+<style>
+  .date-inputs-row {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: flex-end;
+  }
+  .date-input-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .date-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+  }
+  .date-input-wrap input[type="date"] {
+    border: none;
+    border-bottom: 2px solid steelblue;
+    padding: 4px 2px;
+    font-size: 15px;
+    background: transparent;
+    color: #222;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .date-input-wrap input[type="date"]:focus {
+    border-bottom-color: #1a3f5c;
+  }
+  .preset-btns {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .preset-btn {
+    border: 1.5px solid steelblue;
+    background: transparent;
+    color: steelblue;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+  }
+  .preset-btn:hover {
+    background: steelblue;
+    color: #fff;
+  }
+  .index-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .index-btn {
+    border: 1.5px solid steelblue;
+    background: transparent;
+    color: steelblue;
+    border-radius: 4px;
+    padding: 4px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s;
+  }
+  .index-btn.active, .index-btn:hover {
+    background: steelblue;
+    color: #fff;
+  }
+</style>
+```
+
+```{ojs}
+dji = {
+  const res = await fetch("data/DJI-100y.csv");
+  const text = await res.text();
+  return text.trim().split('\n').slice(1).map(row => {
+    const cols = row.split(',');
+    const rawDate = cols[0].replace(/"/g, '');
+    const [month, day, year] = rawDate.split('/');
+    return { date: new Date(`${year}-${month}-${day}`), value: +cols[1] };
+  });
+}
+
+sp500 = {
+  const res = await fetch("data/SP500-1927-2019.csv");
+  const text = await res.text();
+  return text.trim().split('\n').slice(1).map(row => {
+    const cols = row.split(',');
+    return { date: new Date(cols[0]), value: +cols[4] };
+  });
+}
+
+function dateInput(label, value) {
+  const wrap = html`<div class="date-input-wrap">
+    <span class="date-label">${label}</span>
+    <input type="date" value="${value}" min="1914-12-31" max="2026-03-27">
+  </div>`;
+  const input = wrap.querySelector("input");
+  wrap.value = new Date(input.value);
+  input.addEventListener("change", () => {
+    wrap.value = new Date(input.value);
+    wrap.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  return wrap;
+}
+
+viewof dateRange = {
+  const start = dateInput("From", "1914-12-31");
+  const end = dateInput("To", "2026-03-27");
+
+  const presets = [
+    { label: "1926 – 1955", from: "1926-01-01", to: "1955-12-31" },
+    { label: "1956 – 1985", from: "1956-01-01", to: "1985-12-31" },
+    { label: "1986 – 2015", from: "1986-01-01", to: "2015-12-31" },
+  ];
+
+  function applyPreset(from, to) {
+    const si = start.querySelector("input");
+    const ei = end.querySelector("input");
+    si.value = from;
+    ei.value = to;
+    si.dispatchEvent(new Event("change", { bubbles: true }));
+    ei.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  const btns = html`<div class="preset-btns">${presets.map(p => {
+    const b = html`<button class="preset-btn">${p.label}</button>`;
+    b.addEventListener("click", () => applyPreset(p.from, p.to));
+    return b;
+  })}</div>`;
+
+  const row = html`<div class="date-inputs-row">${start}${end}</div>`;
+  const container = html`<div>${btns}${row}</div>`;
+  container.value = { start: new Date("1914-12-31"), end: new Date("2026-03-27") };
+
+  start.addEventListener("input", () => {
+    container.value = { ...container.value, start: start.value };
+    container.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  end.addEventListener("input", () => {
+    container.value = { ...container.value, end: end.value };
+    container.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  return container;
+}
+
+viewof index = {
+  let current = "DJI";
+  const options = ["DJI", "S&P 500", "Both"];
+  const buttons = options.map(opt => {
+    const b = html`<button class="index-btn${opt === current ? " active" : ""}">${opt}</button>`;
+    b.addEventListener("click", () => {
+      current = opt;
+      container.querySelectorAll(".index-btn").forEach(btn => btn.classList.remove("active"));
+      b.classList.add("active");
+      container.value = opt;
+      container.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    return b;
+  });
+  const container = html`<div class="index-toggle">${buttons}</div>`;
+  container.value = current;
+  return container;
+}
+
+filteredDJI = dji.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
+filteredSP = sp500.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
+
+plotData = {
+  if (index === "DJI") return filteredDJI.map(d => ({ ...d, series: "DJI" }));
+  if (index === "S&P 500") return filteredSP.map(d => ({ ...d, series: "S&P 500" }));
+  const djiBase = filteredDJI[0]?.value ?? 1;
+  const spBase = filteredSP[0]?.value ?? 1;
+  return [
+    ...filteredDJI.map(d => ({ date: d.date, value: d.value / djiBase, series: "DJI" })),
+    ...filteredSP.map(d => ({ date: d.date, value: d.value / spBase, series: "S&P 500" }))
+  ];
+}
+
+{
+  const yearRange = `${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()}`;
+  if (index === "Both") {
+    const djiEnd = filteredDJI[filteredDJI.length - 1]?.value / filteredDJI[0]?.value;
+    const spEnd = filteredSP[filteredSP.length - 1]?.value / filteredSP[0]?.value;
+    return html`<p style="font-size:15px; color:#555; margin:8px 0 16px;">
+      $1 invested: <strong style="color:steelblue;">DJI → $${djiEnd?.toFixed(2) ?? "N/A"}</strong>
+      &nbsp;·&nbsp;
+      <strong style="color:darkorange;">S&P 500 → $${spEnd?.toFixed(2) ?? "N/A"}</strong>
+    </p>`;
+  }
+  const filtered = index === "DJI" ? filteredDJI : filteredSP;
+  const result = filtered.length ? (filtered[filtered.length - 1].value / filtered[0].value).toFixed(2) : "N/A";
+  return html`<p style="font-size:15px; color:#555; margin:8px 0 16px;">
+    $1 invested at the start of this range would be worth
+    <strong style="font-size:18px; color:steelblue;">$${result}</strong> at the end.
+  </p>`;
+}
+
+Plot.plot({
+  title: index === "Both"
+    ? `DJI vs S&P 500 — Normalized (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`
+    : index === "DJI"
+      ? `Dow Jones Industrial Average (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`
+      : `S&P 500 (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`,
+  width: 800,
+  height: 400,
+  color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
+  x: { type: "time", label: "Date" },
+  y: { label: index === "Both" ? "Growth (1 = starting value)" : "Index Value", grid: true },
+  marks: [
+    Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
+    Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toFixed(2) })),
+    Plot.ruleY([0])
+  ]
+})
+```
+
+## Macroeconomic Situation
+
+## Sector & Thematic Views
+
+## Individual Positions
+
+## Risk Management
