@@ -40,27 +40,6 @@ These are great to have, but can be very difficult to achieve as a retail invest
 ![Black Sharpe Ratio: $0.3 – 0.5$, Green Sharpe Ratio: $1.5 – 2.0$](images/shapre-ratio-visualized.webp)
 :::
 
-## Constraints
-
-- I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
-    - Rebalancing (adjusting portfolio allocation) should primarily happen through this mechanism, as opposed to selling stock
-- Max drawdown of $\textcolor{red}{-35\%}$
-    - How much of a fall am I genuinely able to stomach before I begin panic selling
-- No use of (Charles Schwab's) margin at all
-    - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
-        - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means your stock would need to outperform the market just to see a profit.
-    - It's a terrible deal (at least the rates that Schwab sets, at a low interest it can very well be worth it)
-        - e.g. let's say you bought a stock purely on margin for $\$1,000$. After one year, you sell this stock. You automatically owe $\$118.25$ in interest. Here is how different outcomes would look:
-
-| Scenario | Sale Price | After Interest | Profit/Loss |
-|---|---|---|---|
-| $20\%$ gain | $\$1,200$ | $\$1,200 - \$1,118.25$ | $\textcolor{green}{+\$81.75}$ |
-| $11.825\%$ gain | $\$1,118.25$ | $\$1,118.25 - \$1,118.25$ | $\$0$ |
-| $0\%$ gain | $\$1,000$ | $\$1,000 - \$1,118.25$ | $\textcolor{red}{-\$118.25}$ |
-| $-5\%$ loss | $\$950$ | $\$950 - \$1,118.25$ | $\textcolor{red}{-\$168.25}$ |
-| $-20\%$ loss | $\$800$ | $\$800 - \$1,118.25$ | $\textcolor{red}{-\$318.25}$ |
-
-
 ## Beliefs & Principles
 
 ### It's always a good time to invest
@@ -370,7 +349,7 @@ events = [
 }
 ```
 
-## Asset Allocation
+## Strategic Allocation
 
 > "Asset Allocation is more than 100% of an Investment Portfolio's Performance" — David Swensen, CIO of Yale's Endowment; widely considered the GOAT of institutional investing
 
@@ -589,6 +568,28 @@ We can use the legendary book _A Random Walk Down Wall Street_ to get a starting
 This allocation also closely resembles that of the **LifePath** funds (commonly offered in 401k plans).
 
 ### The S&P 500 over-allocation problem
+
+## Constraints
+
+- I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
+    - Rebalancing (adjusting portfolio allocation) should primarily happen through this mechanism, as opposed to selling stock
+- Max drawdown of $\textcolor{red}{-35\%}$
+    - How much of a fall am I genuinely able to stomach before I begin panic selling
+- No use of (Charles Schwab's) margin at all
+    - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
+        - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means your stock would need to outperform the market just to see a profit.
+    - It's a terrible deal (at least the rates that Schwab sets, at a low interest it can very well be worth it)
+        - e.g. let's say you bought a stock purely on margin for $\$1,000$. After one year, you sell this stock. You automatically owe $\$118.25$ in interest. Here is how different outcomes would look:
+
+| Scenario | Sale Price | After Interest | Profit/Loss |
+|---|---|---|---|
+| $20\%$ gain | $\$1,200$ | $\$1,200 - \$1,118.25$ | $\textcolor{green}{+\$81.75}$ |
+| $11.825\%$ gain | $\$1,118.25$ | $\$1,118.25 - \$1,118.25$ | $\$0$ |
+| $0\%$ gain | $\$1,000$ | $\$1,000 - \$1,118.25$ | $\textcolor{red}{-\$118.25}$ |
+| $-5\%$ loss | $\$950$ | $\$950 - \$1,118.25$ | $\textcolor{red}{-\$168.25}$ |
+| $-20\%$ loss | $\$800$ | $\$800 - \$1,118.25$ | $\textcolor{red}{-\$318.25}$ |
+
+
 
 ## Macroeconomic Situation
 
