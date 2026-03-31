@@ -386,7 +386,7 @@ plotData = {
     ]
   });
 
-  return html`<div>
+  return html`<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;">
     <p style="font-size:15px; color:#444; font-weight:600; margin:0 0 2px;">${titleText}</p>
     ${sharpeEl}
     ${plot}
@@ -535,7 +535,7 @@ We can use the legendary book _A Random Walk Down Wall Street_ to get a starting
     const legendX = radius * 2 + 48;
     const legendHeight = data.length * itemHeight;
     const descHeight = 48;
-    const height = Math.max(radius * 2 + 40, legendHeight + 40) + descHeight;
+    const height = Math.max(radius * 2, legendHeight) + descHeight;
     const width = legendX + noteWidth + 16;
     const pieX = radius + 20, pieY = descHeight + (height - descHeight) / 2;
 
@@ -601,7 +601,7 @@ We can use the legendary book _A Random Walk Down Wall Street_ to get a starting
     return b;
   });
 
-  const wrapper = html`<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;">
+  const wrapper = html`<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 0px;margin:16px 0;">
     <div class="index-toggle">${buttons}</div>
     ${chartDiv}
   </div>`;
