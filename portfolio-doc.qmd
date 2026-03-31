@@ -207,6 +207,15 @@ viewof index = {
   return container;
 }
 
+events = [
+  { date: new Date("1929-10-28"), name: "Black Tuesday", detail: "Dow drops −23.6% in 2 days" },
+  { date: new Date("1932-07-08"), name: "Great Depression bottom", detail: "−89% from the 1929 peak" },
+  { date: new Date("1933-03-01"), name: "Peak unemployment", detail: "US unemployment reaches 25%" },
+  { date: new Date("1939-09-01"), name: "WWII begins", detail: "Germany invades Poland" },
+]
+
+visibleEvents = events.filter(e => e.date >= dateRange.start && e.date <= dateRange.end)
+
 filteredDJI = dji.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
 filteredSP = sp500.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
 
@@ -249,6 +258,7 @@ plotData = {
     width: 800,
     height: 400,
     marginRight: 100,
+    marginTop: 40,
     color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
     x: { type: "time", label: "Date" },
     y: { label: index === "Both" ? "Growth (1 = starting value)" : "Index Value", grid: true },
@@ -260,6 +270,22 @@ plotData = {
         text: d => `${+d.pct >= 0 ? "+" : ""}${d.pct}%`,
         fill: d => +d.pct >= 0 ? "green" : "red",
         dx: 8, textAnchor: "start", fontWeight: "bold", fontSize: 13
+      }),
+      Plot.ruleX(visibleEvents, {
+        x: "date",
+        stroke: "crimson",
+        strokeDasharray: "4,3",
+        strokeOpacity: 0.7,
+        tip: true,
+        channels: { Event: d => d.name, Detail: d => d.detail }
+      }),
+      Plot.text(visibleEvents, {
+        x: "date",
+        text: () => "▼",
+        frameAnchor: "top",
+        lineAnchor: "bottom",
+        fontSize: 14,
+        fill: "crimson",
       }),
       Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toLocaleString() })),
       Plot.ruleY([0])
