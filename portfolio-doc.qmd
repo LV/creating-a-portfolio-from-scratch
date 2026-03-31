@@ -281,19 +281,21 @@ plotData = {
       : [];
   }
 
-  return Plot.plot({
-    title: index === "Both"
-      ? `DJI vs S&P 500 — Normalized (${yearRange})`
-      : index === "DJI"
-        ? `Dow Jones Industrial Average (${yearRange})`
-        : `S&P 500 (${yearRange})`,
+  const titleText = index === "Both"
+    ? `Reasons not to invest — DJI vs S&P 500 (${yearRange})`
+    : index === "DJI"
+      ? `Reasons not to invest — Dow Jones (${yearRange})`
+      : `Reasons not to invest — S&P 500 (${yearRange})`;
+
+  const plot = Plot.plot({
     width: 800,
     height: 400,
     marginRight: 100,
     marginTop: 40,
+    marginLeft: 80,
     color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
     x: { type: "time", label: "Date" },
-    y: { label: index === "Both" ? "Growth (1 = starting value)" : "Index Value", grid: true },
+    y: { label: index === "Both" ? "Growth multiple" : "Value (USD)", tickFormat: index === "Both" ? d => d + "x" : d => "$" + d.toLocaleString(), grid: true },
     marks: [
       Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
       Plot.dot(endLabels, { x: "date", y: "value", fill: d => +d.pct >= 0 ? "green" : "red", r: 4 }),
@@ -323,6 +325,11 @@ plotData = {
       Plot.ruleY([0])
     ]
   });
+
+  return html`<div>
+    <p style="font-size:15px; color:#444; font-weight:600; margin:0 0 6px;">${titleText}</p>
+    ${plot}
+  </div>`;
 }
 ```
 
