@@ -182,65 +182,6 @@ function dateInput(label, value) {
   return wrap;
 }
 
-viewof dateRange = {
-  const start = dateInput("From", "1925-01-01");
-  const end = dateInput("To", "1955-12-31");
-
-  const presets = [
-    { label: "1926 – 1955", from: "1926-01-01", to: "1955-12-31" },
-    { label: "1956 – 1985", from: "1956-01-01", to: "1985-12-31" },
-    { label: "1986 – 2015", from: "1986-01-01", to: "2015-12-31" },
-  ];
-
-  function applyPreset(from, to) {
-    const si = start.querySelector("input");
-    const ei = end.querySelector("input");
-    si.value = from;
-    ei.value = to;
-    si.dispatchEvent(new Event("change", { bubbles: true }));
-    ei.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-
-  const btns = html`<div class="preset-btns">${presets.map(p => {
-    const b = html`<button class="preset-btn">${p.label}</button>`;
-    b.addEventListener("click", () => applyPreset(p.from, p.to));
-    return b;
-  })}</div>`;
-
-  const row = html`<div class="date-inputs-row">${start}${end}</div>`;
-  const container = html`<div>${btns}${row}</div>`;
-  container.value = { start: new Date("1925-01-01"), end: new Date("1955-12-31") };
-
-  start.addEventListener("input", () => {
-    container.value = { ...container.value, start: start.value };
-    container.dispatchEvent(new Event("input", { bubbles: true }));
-  });
-  end.addEventListener("input", () => {
-    container.value = { ...container.value, end: end.value };
-    container.dispatchEvent(new Event("input", { bubbles: true }));
-  });
-  return container;
-}
-
-viewof index = {
-  let current = "DJI";
-  const options = ["DJI", "S&P 500", "Both"];
-  const buttons = options.map(opt => {
-    const b = html`<button class="index-btn${opt === current ? " active" : ""}">${opt}</button>`;
-    b.addEventListener("click", () => {
-      current = opt;
-      container.querySelectorAll(".index-btn").forEach(btn => btn.classList.remove("active"));
-      b.classList.add("active");
-      container.value = opt;
-      container.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    return b;
-  });
-  const container = html`<div class="index-toggle">${buttons}</div>`;
-  container.value = current;
-  return container;
-}
-
 events = [
   { date: new Date("1929-10-28"), name: "Black Tuesday", detail: "Dow drops −23.6% in 2 days" },
   { date: new Date("1932-07-08"), name: "Great Depression bottom", detail: "−89% from the 1929 peak" },
@@ -280,116 +221,151 @@ events = [
   { date: new Date("2025-04-02"), name: "Liberation Day tariffs", detail: "Trump tariff announcement; sharp market selloff" },
 ]
 
-visibleEvents = events.filter(e => e.date >= dateRange.start && e.date <= dateRange.end)
-
-filteredDJI = dji.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
-filteredSP = sp500.filter(d => d.date >= dateRange.start && d.date <= dateRange.end)
-
-plotData = {
-  if (index === "DJI") return filteredDJI.map(d => ({ ...d, series: "DJI" }));
-  if (index === "S&P 500") return filteredSP.map(d => ({ ...d, series: "S&P 500" }));
-  const djiBase = filteredDJI[0]?.value ?? 1;
-  const spBase = filteredSP[0]?.value ?? 1;
-  return [
-    ...filteredDJI.map(d => ({ date: d.date, value: d.value / djiBase, series: "DJI" })),
-    ...filteredSP.map(d => ({ date: d.date, value: d.value / spBase, series: "S&P 500" }))
-  ];
-}
-
 {
-  const yearRange = `${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()}`;
+  let state = {
+    dateRange: { start: new Date("1925-01-01"), end: new Date("1955-12-31") },
+    index: "DJI",
+  };
 
-  let endLabels;
-  if (index === "Both") {
-    const djiSeries = plotData.filter(d => d.series === "DJI");
-    const spSeries = plotData.filter(d => d.series === "S&P 500");
-    const djiLast = djiSeries.at(-1);
-    const spLast = spSeries.at(-1);
-    const yValues = plotData.map(d => d.value);
-    const yRange = Math.max(...yValues) - Math.min(...yValues);
-    const close = Math.abs(djiLast.value - spLast.value) < yRange * 0.05;
-    endLabels = [
-      { ...djiLast, pct: ((djiLast.value - 1) * 100).toFixed(2), dyOffset: close ? -10 : 0 },
-      { ...spLast,  pct: ((spLast.value  - 1) * 100).toFixed(2), dyOffset: close ?  10 : 0 },
-    ];
-  } else {
-    const first = plotData[0];
-    const last = plotData.at(-1);
-    endLabels = first && last
-      ? [{ ...last, pct: ((last.value / first.value - 1) * 100).toFixed(2) }]
-      : [];
+  // --- Controls ---
+  const startInput = dateInput("From", "1925-01-01");
+  const endInput   = dateInput("To",   "1955-12-31");
+
+  const presets = [
+    { label: "1926 – 1955", from: "1926-01-01", to: "1955-12-31" },
+    { label: "1956 – 1985", from: "1956-01-01", to: "1985-12-31" },
+    { label: "1986 – 2015", from: "1986-01-01", to: "2015-12-31" },
+  ];
+
+  function applyPreset(from, to) {
+    const si = startInput.querySelector("input");
+    const ei = endInput.querySelector("input");
+    si.value = from; si.dispatchEvent(new Event("change", { bubbles: true }));
+    ei.value = to;   ei.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  const titleText = index === "Both"
-    ? `Reasons not to invest — DJI vs S&P 500 (${yearRange})`
-    : index === "DJI"
-      ? `Reasons not to invest — Dow Jones (${yearRange})`
-      : `Reasons not to invest — S&P 500 (${yearRange})`;
+  const presetBtns = html`<div class="preset-btns">${presets.map(p => {
+    const b = html`<button class="preset-btn">${p.label}</button>`;
+    b.addEventListener("click", () => applyPreset(p.from, p.to));
+    return b;
+  })}</div>`;
 
-  function sharpe(data) {
-    if (data.length < 2) return null;
-    const rets = data.slice(1).map((d, i) => (d.value - data[i].value) / data[i].value);
-    const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
-    const std = Math.sqrt(rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length);
-    return ((mean / std) * Math.sqrt(12)).toFixed(2);
-  }
-
-  const sharpeEl = index === "Both"
-    ? html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
-        Sharpe ratio — <span style="color:steelblue;">DJI: ${sharpe(filteredDJI)}</span>
-        &nbsp;·&nbsp;
-        <span style="color:darkorange;">S&P 500: ${sharpe(filteredSP)}</span>
-        <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
-      </p>`
-    : html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
-        Sharpe ratio: <strong>${sharpe(index === "DJI" ? filteredDJI : filteredSP)}</strong>
-        <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
-      </p>`;
-
-  const plot = Plot.plot({
-    width: 800,
-    height: 400,
-    marginRight: 100,
-    marginTop: 40,
-    marginLeft: 80,
-    color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
-    x: { type: "time", label: "Date" },
-    y: { label: index === "Both" ? "Growth multiple" : "Value (USD)", tickFormat: index === "Both" ? d => d + "x" : d => "$" + d.toLocaleString(), grid: true },
-    marks: [
-      Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
-      Plot.dot(endLabels, { x: "date", y: "value", fill: d => +d.pct >= 0 ? "green" : "red", r: 4 }),
-      Plot.text(endLabels, {
-        x: "date", y: "value",
-        text: d => `${+d.pct >= 0 ? "+" : ""}${d.pct}%`,
-        fill: d => +d.pct >= 0 ? "green" : "red",
-        dx: 8, dy: d => d.dyOffset ?? 0,
-        textAnchor: "start", fontWeight: "bold", fontSize: 13
-      }),
-      Plot.ruleX(visibleEvents, {
-        x: "date",
-        stroke: "crimson",
-        strokeDasharray: "4,3",
-        strokeOpacity: 0.7,
-        tip: true,
-        channels: { Event: d => d.name, Detail: d => d.detail }
-      }),
-      Plot.text(visibleEvents, {
-        x: "date",
-        text: () => "▼",
-        frameAnchor: "top",
-        lineAnchor: "bottom",
-        fontSize: 14,
-        fill: "crimson",
-      }),
-      Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toLocaleString() })),
-      Plot.ruleY([0])
-    ]
+  startInput.addEventListener("input", () => {
+    state.dateRange = { ...state.dateRange, start: startInput.value };
+    render();
+  });
+  endInput.addEventListener("input", () => {
+    state.dateRange = { ...state.dateRange, end: endInput.value };
+    render();
   });
 
+  const indexOptions = ["DJI", "S&P 500", "Both"];
+  const indexBtns = indexOptions.map(opt => {
+    const b = html`<button class="index-btn${opt === state.index ? " active" : ""}">${opt}</button>`;
+    b.addEventListener("click", () => {
+      state.index = opt;
+      indexToggle.querySelectorAll(".index-btn").forEach(btn => btn.classList.remove("active"));
+      b.classList.add("active");
+      render();
+    });
+    return b;
+  });
+  const indexToggle = html`<div class="index-toggle">${indexBtns}</div>`;
+
+  const chartDiv = html`<div></div>`;
+
+  function render() {
+    const { dateRange, index } = state;
+    const filteredDJI = dji.filter(d => d.date >= dateRange.start && d.date <= dateRange.end);
+    const filteredSP  = sp500.filter(d => d.date >= dateRange.start && d.date <= dateRange.end);
+    const visibleEvts = events.filter(e => e.date >= dateRange.start && e.date <= dateRange.end);
+
+    let plotData;
+    if (index === "DJI") plotData = filteredDJI.map(d => ({ ...d, series: "DJI" }));
+    else if (index === "S&P 500") plotData = filteredSP.map(d => ({ ...d, series: "S&P 500" }));
+    else {
+      const djiBase = filteredDJI[0]?.value ?? 1, spBase = filteredSP[0]?.value ?? 1;
+      plotData = [
+        ...filteredDJI.map(d => ({ date: d.date, value: d.value / djiBase, series: "DJI" })),
+        ...filteredSP.map(d => ({ date: d.date, value: d.value / spBase, series: "S&P 500" })),
+      ];
+    }
+
+    const yearRange = `${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()}`;
+
+    let endLabels;
+    if (index === "Both") {
+      const djiSeries = plotData.filter(d => d.series === "DJI");
+      const spSeries  = plotData.filter(d => d.series === "S&P 500");
+      const djiLast = djiSeries.at(-1), spLast = spSeries.at(-1);
+      const yRange = Math.max(...plotData.map(d => d.value)) - Math.min(...plotData.map(d => d.value));
+      const close = Math.abs(djiLast.value - spLast.value) < yRange * 0.05;
+      endLabels = [
+        { ...djiLast, pct: ((djiLast.value - 1) * 100).toFixed(2), dyOffset: close ? -10 : 0 },
+        { ...spLast,  pct: ((spLast.value  - 1) * 100).toFixed(2), dyOffset: close ?  10 : 0 },
+      ];
+    } else {
+      const first = plotData[0], last = plotData.at(-1);
+      endLabels = first && last ? [{ ...last, pct: ((last.value / first.value - 1) * 100).toFixed(2) }] : [];
+    }
+
+    const titleText = index === "Both"
+      ? `Reasons not to invest — DJI vs S&P 500 (${yearRange})`
+      : index === "DJI"
+        ? `Reasons not to invest — Dow Jones (${yearRange})`
+        : `Reasons not to invest — S&P 500 (${yearRange})`;
+
+    function sharpe(data) {
+      if (data.length < 2) return null;
+      const rets = data.slice(1).map((d, i) => (d.value - data[i].value) / data[i].value);
+      const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
+      const std = Math.sqrt(rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length);
+      return ((mean / std) * Math.sqrt(12)).toFixed(2);
+    }
+
+    const sharpeEl = index === "Both"
+      ? html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
+          Sharpe ratio — <span style="color:steelblue;">DJI: ${sharpe(filteredDJI)}</span>
+          &nbsp;·&nbsp;
+          <span style="color:darkorange;">S&P 500: ${sharpe(filteredSP)}</span>
+          <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
+        </p>`
+      : html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
+          Sharpe ratio: <strong>${sharpe(index === "DJI" ? filteredDJI : filteredSP)}</strong>
+          <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
+        </p>`;
+
+    const plot = Plot.plot({
+      width: 800, height: 400, marginRight: 100, marginTop: 40, marginLeft: 80,
+      color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
+      x: { type: "time", label: "Date" },
+      y: { label: index === "Both" ? "Growth multiple" : "Value (USD)", tickFormat: index === "Both" ? d => d + "x" : d => "$" + d.toLocaleString(), grid: true },
+      marks: [
+        Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
+        Plot.dot(endLabels, { x: "date", y: "value", fill: d => +d.pct >= 0 ? "green" : "red", r: 4 }),
+        Plot.text(endLabels, { x: "date", y: "value", text: d => `${+d.pct >= 0 ? "+" : ""}${d.pct}%`, fill: d => +d.pct >= 0 ? "green" : "red", dx: 8, dy: d => d.dyOffset ?? 0, textAnchor: "start", fontWeight: "bold", fontSize: 13 }),
+        Plot.ruleX(visibleEvts, { x: "date", stroke: "crimson", strokeDasharray: "4,3", strokeOpacity: 0.7, tip: true, channels: { Event: d => d.name, Detail: d => d.detail } }),
+        Plot.text(visibleEvts, { x: "date", text: () => "▼", frameAnchor: "top", lineAnchor: "bottom", fontSize: 14, fill: "crimson" }),
+        Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toLocaleString() })),
+        Plot.ruleY([0]),
+      ],
+    });
+
+    chartDiv.innerHTML = "";
+    chartDiv.append(
+      html`<p style="font-size:15px; color:#444; font-weight:600; margin:0 0 2px;">${titleText}</p>`,
+      sharpeEl,
+      plot,
+    );
+  }
+
+  render();
+
   return html`<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;">
-    <p style="font-size:15px; color:#444; font-weight:600; margin:0 0 2px;">${titleText}</p>
-    ${sharpeEl}
-    ${plot}
+    ${presetBtns}
+    <div class="date-inputs-row" style="margin-bottom:16px;">${startInput}${endInput}</div>
+    ${indexToggle}
+    ${chartDiv}
   </div>`;
 }
 ```
