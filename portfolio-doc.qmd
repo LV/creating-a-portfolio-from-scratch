@@ -12,26 +12,38 @@ The following document serves as a way to document my own thought process toward
     - I do not have the time to look at the market 24/7 and react to things
         - If I did anyway, I'd probably perform worse
     - I want to have an outlook where I cash out no earlier than 5 years from now
+    - Also minimizes capital gains tax
+- Good risk-adjusted performance, Sharpe ratio of $\sim 0.8$
+    - _Sharpe ratio_ is just a calculation that tells you how smooth your returns are ([more info](https://www.investopedia.com/terms/s/sharperatio.asp))
+    - Below shows two portfolios, green and black. They both started with the same amount, and ended with the same return. Which would you prefer?
+
+
+::: {style="text-align: center;"}
+![Black Sharpe Ratio: $0.3 – 0.5$, Green Sharpe Ratio: $1.5 – 2.0$](images/shapre-ratio-visualized.webp)
+:::
 
 ## Constraints
 
 - I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
 - No use of margin at all
     - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
-        - e.g. let's say you bought a stock purely on margin for $\$1,000$. After one year, you sell this stock. You automatically owe $\$118.25$ in interest which means that a:
-            - $20\%$ gain ($\$1,200$): $\$1,200 - \$1,000 - \$118.25 =  \textcolor{green}{\$81.75}$
-            - $11.825\%$ gain ($\$1,118.25$): $\$1,118.25 - \$1,000 - \$118.25 =  \$0$
-            - $0\%$ gain ($\$1,000$): $\$1,000 - \$1,000 - \$118.25 =  \textcolor{red}{-\$118.25}$
-            - $-5\%$ loss ($\$950$): $\$950 - \$1,000 - \$118.25 =  \textcolor{red}{-\$168.25}$
-            - $-20\%$ loss ($\$800$): $\$800 - \$1,000 - \$118.25 =  \textcolor{red}{-\$318.25}$
-        - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means that your stock would need to outperform the market just to see a profit.
-        - It's a terrible deal
+        - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means your stock would need to outperform the market just to see a profit.
+    - It's a terrible deal (at least the rates that Schwab sets, at a low interest it can very well be worth it)
+        - e.g. let's say you bought a stock purely on margin for $\$1,000$. After one year, you sell this stock. You automatically owe $\$118.25$ in interest. Here is how different outcomes would look:
+
+| Scenario | Sale Price | After Interest | Profit/Loss |
+|---|---|---|---|
+| $20\%$ gain | $\$1,200$ | $\$1,200 - \$1,118.25$ | $\textcolor{green}{+\$81.75}$ |
+| $11.825\%$ gain | $\$1,118.25$ | $\$1,118.25 - \$1,118.25$ | $\$0$ |
+| $0\%$ gain | $\$1,000$ | $\$1,000 - \$1,118.25$ | $\textcolor{red}{-\$118.25}$ |
+| $-5\%$ loss | $\$950$ | $\$950 - \$1,118.25$ | $\textcolor{red}{-\$168.25}$ |
+| $-20\%$ loss | $\$800$ | $\$800 - \$1,118.25$ | $\textcolor{red}{-\$318.25}$ |
 
 ## Beliefs & Principles
 
 ### It's always a good time to invest
 
-Despite how ugly things in the world may seem, it is difficult to argue against putting money into the market long term ([source](https://www.macrotrends.net/datasets/1319/dow-jones-100-year-historical-chart)).
+Despite how ugly things in the world may seem, it is difficult to argue against putting money into the market over a long enough period of a time ([source](https://www.macrotrends.net/datasets/1319/dow-jones-100-year-historical-chart)).
 
 Try any of the presets, or choose your own dates
 
@@ -292,6 +304,26 @@ plotData = {
       ? `Reasons not to invest — Dow Jones (${yearRange})`
       : `Reasons not to invest — S&P 500 (${yearRange})`;
 
+  function sharpe(data) {
+    if (data.length < 2) return null;
+    const rets = data.slice(1).map((d, i) => (d.value - data[i].value) / data[i].value);
+    const mean = rets.reduce((a, b) => a + b, 0) / rets.length;
+    const std = Math.sqrt(rets.reduce((a, b) => a + (b - mean) ** 2, 0) / rets.length);
+    return ((mean / std) * Math.sqrt(12)).toFixed(2);
+  }
+
+  const sharpeEl = index === "Both"
+    ? html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
+        Sharpe ratio — <span style="color:steelblue;">DJI: ${sharpe(filteredDJI)}</span>
+        &nbsp;·&nbsp;
+        <span style="color:darkorange;">S&P 500: ${sharpe(filteredSP)}</span>
+        <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
+      </p>`
+    : html`<p style="font-size:13px; color:#666; margin:2px 0 8px;">
+        Sharpe ratio: <strong>${sharpe(index === "DJI" ? filteredDJI : filteredSP)}</strong>
+        <span style="color:#aaa; font-size:11px;"> (annualized, assumes 0% risk-free rate)</span>
+      </p>`;
+
   const plot = Plot.plot({
     width: 800,
     height: 400,
@@ -333,7 +365,8 @@ plotData = {
   });
 
   return html`<div>
-    <p style="font-size:15px; color:#444; font-weight:600; margin:0 0 6px;">${titleText}</p>
+    <p style="font-size:15px; color:#444; font-weight:600; margin:0 0 2px;">${titleText}</p>
+    ${sharpeEl}
     ${plot}
   </div>`;
 }
