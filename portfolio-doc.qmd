@@ -567,8 +567,6 @@ We can use the legendary book _A Random Walk Down Wall Street_ to get a starting
 
 This allocation also closely resembles that of the **LifePath** funds (commonly offered in 401k plans).
 
-### The S&P 500 over-allocation problem
-
 ## Constraints
 
 - I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
@@ -589,7 +587,17 @@ This allocation also closely resembles that of the **LifePath** funds (commonly 
 | $-5\%$ loss | $\$950$ | $\$950 - \$1,118.25$ | $\textcolor{red}{-\$168.25}$ |
 | $-20\%$ loss | $\$800$ | $\$800 - \$1,118.25$ | $\textcolor{red}{-\$318.25}$ |
 
+## Selecting appropriate indices
 
+## Tactical asset allocation
+
+## Active equity management
+
+## Active fixed income management
+
+## Alternative investments
+
+## Analysis and reporting
 
 ## Macroeconomic Situation
 
