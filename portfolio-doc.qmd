@@ -1,4 +1,3 @@
-
 ---
 title: "Constructing a Portfolio from Scratch"
 format: html
