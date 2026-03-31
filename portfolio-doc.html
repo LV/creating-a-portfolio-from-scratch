@@ -694,7 +694,7 @@ window.Quarto = {
 <ul>
 <li>If one asset drops, we want our other assets to either be unaffected or increase, with the overall effect being that we reduce the volatility of our portfolio
 <ul>
-<li>This is the mathematical basis behind <em>diversification</em></li>
+<li>This is the <a href="#sec-diversification">mathematical basis behind <em>diversification</em></a></li>
 </ul></li>
 <li>Note that during ‘tail events’ (like a crisis), these assumptions of assets being lowly correlated to each other tend to not hold (e.g.&nbsp;a massive sell-off)</li>
 </ul></li>
@@ -741,19 +741,19 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>A</td>
-<td>8%</td>
-<td>12%</td>
-<td>11%</td>
-<td>9%</td>
-<td>10%</td>
+<td><span class="math inline">\(8\%\)</span></td>
+<td><span class="math inline">\(12\%\)</span></td>
+<td><span class="math inline">\(11\%\)</span></td>
+<td><span class="math inline">\(9\%\)</span></td>
+<td><span class="math inline">\(10\%\)</span></td>
 </tr>
 <tr class="even">
 <td>B</td>
-<td>28%</td>
-<td>−11%</td>
-<td>22%</td>
-<td>−6%</td>
-<td>17%</td>
+<td><span class="math inline">\(28\%\)</span></td>
+<td><span class="math inline">\(-11\%\)</span></td>
+<td><span class="math inline">\(22\%\)</span></td>
+<td><span class="math inline">\(-6\%\)</span></td>
+<td><span class="math inline">\(17\%\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -762,6 +762,42 @@ window.Quarto = {
 <p><span class="math display">\[\text{Mean}_B = \bar{X}_B = \frac{0.28 + (-0.11) + 0.22 + (-0.06) + 0.17}{5} = 0.10\]</span></p>
 <p><span class="math display">\[\small\sigma_{B} = \sqrt{\frac{(0.28 - 0.10)^2 + (-0.11 - 0.10)^2 + (0.22 - 0.10)^2 + (-0.06 - 0.10)^2 + (0.17 - 0.10)^2}{4}} = 0.1742\ldots \approx 17\%\]</span></p>
 <p>We say that asset <span class="math inline">\(B\)</span> is more than <span class="math inline">\(8 \times\)</span> riskier than asset <span class="math inline">\(A\)</span>.</p>
+</section>
+</section>
+<section id="sec-diversification" class="level3">
+<h3 class="anchored" data-anchor-id="sec-diversification">B: Why portfolios of lowly correlated assets are better</h3>
+<p>In the following examples, we’ll illustrate why combining two assets that do not correlate together, given positive returns, can result in a significantly more attractive portfolio</p>
+<section id="high-correlation" class="level4">
+<h4 class="anchored" data-anchor-id="high-correlation">High correlation</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Asset</th>
+<th>Return</th>
+<th>Risk</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td><span class="math inline">\(8.00\%\)</span></td>
+<td><span class="math inline">\(10.00\%\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td><span class="math inline">\(16.00\%\)</span></td>
+<td><span class="math inline">\(30.00\%\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Let <span class="math inline">\(\text{Correlation}_{A,B} = r_{A,B} = 1\)</span></p>
+<p>This means that the graphs could look something like this:</p>
+</section>
+<section id="high-correlation-1" class="level4">
+<h4 class="anchored" data-anchor-id="high-correlation-1">High correlation</h4>
 </section>
 </section>
 </section>

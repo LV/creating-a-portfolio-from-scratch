@@ -414,7 +414,7 @@ Afterwards, we will calculate the risk and reward of our portfolio comprised of 
 - Correlation of the asset classes
     - We want our asset classes to have low correlation with one another
         - If one asset drops, we want our other assets to either be unaffected or increase, with the overall effect being that we reduce the volatility of our portfolio
-            - This is the mathematical basis behind _diversification_
+            - This is the [mathematical basis behind _diversification_](#sec-diversification)
         - Note that during 'tail events' (like a crisis), these assumptions of assets being lowly correlated to each other tend to not hold (e.g. a massive sell-off)
 
 
@@ -442,8 +442,8 @@ Consider two assets $A$ and $B$, who both have the same average annual return of
 
 | Asset | Yr 1 | Yr 2 | Yr 3 | Yr 4 | Yr 5 |
 |---|---|---|---|---|---|
-| A | 8% | 12% | 11% | 9% | 10% |
-| B | 28% | −11% | 22% | −6% | 17% |
+| A | $8\%$ | $12\%$ | $11\%$ | $9\%$ | $10\%$ |
+| B | $28\%$ | $-11\%$ | $22\%$ | $-6\%$ | $17\%$ |
 
 $$\text{Mean}_A = \bar{X}_A = \frac{0.08 + 0.12 + 0.11 + 0.09 + 0.10}{5} = 0.10$$
 
@@ -454,3 +454,20 @@ $$\text{Mean}_B = \bar{X}_B = \frac{0.28 + (-0.11) + 0.22 + (-0.06) + 0.17}{5} =
 $$\small\sigma_{B} = \sqrt{\frac{(0.28 - 0.10)^2 + (-0.11 - 0.10)^2 + (0.22 - 0.10)^2 + (-0.06 - 0.10)^2 + (0.17 - 0.10)^2}{4}} = 0.1742\ldots \approx 17\%$$
 
 We say that asset $B$ is more than $8 \times$ riskier than asset $A$.
+
+### B: Why portfolios of lowly correlated assets are better {#sec-diversification}
+
+In the following examples, we'll illustrate why combining two assets that do not correlate together, given positive returns, can result in a significantly more attractive portfolio
+
+#### High correlation
+
+| Asset | Return | Risk |
+|---|---|---|---|
+| A | $8.00\%$ | $10.00\%$ |
+| B | $16.00\%$ | $30.00\%$ |
+
+Let $\text{Correlation}_{A,B} = r_{A,B} = 1$
+
+This means that the graphs could look something like this:
+
+#### High correlation
