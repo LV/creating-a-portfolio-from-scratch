@@ -223,40 +223,49 @@ plotData = {
 
 {
   const yearRange = `${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()}`;
-  if (index === "Both") {
-    const djiEnd = filteredDJI[filteredDJI.length - 1]?.value / filteredDJI[0]?.value;
-    const spEnd = filteredSP[filteredSP.length - 1]?.value / filteredSP[0]?.value;
-    return html`<p style="font-size:15px; color:#555; margin:8px 0 16px;">
-      $1 invested: <strong style="color:steelblue;">DJI → $${djiEnd?.toFixed(2) ?? "N/A"}</strong>
-      &nbsp;·&nbsp;
-      <strong style="color:darkorange;">S&P 500 → $${spEnd?.toFixed(2) ?? "N/A"}</strong>
-    </p>`;
-  }
-  const filtered = index === "DJI" ? filteredDJI : filteredSP;
-  const result = filtered.length ? (filtered[filtered.length - 1].value / filtered[0].value).toFixed(2) : "N/A";
-  return html`<p style="font-size:15px; color:#555; margin:8px 0 16px;">
-    $1 invested at the start of this range would be worth
-    <strong style="font-size:18px; color:steelblue;">$${result}</strong> at the end.
-  </p>`;
-}
 
-Plot.plot({
-  title: index === "Both"
-    ? `DJI vs S&P 500 — Normalized (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`
-    : index === "DJI"
-      ? `Dow Jones Industrial Average (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`
-      : `S&P 500 (${dateRange.start.getFullYear()} – ${dateRange.end.getFullYear()})`,
-  width: 800,
-  height: 400,
-  color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
-  x: { type: "time", label: "Date" },
-  y: { label: index === "Both" ? "Growth (1 = starting value)" : "Index Value", grid: true },
-  marks: [
-    Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
-    Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toFixed(2) })),
-    Plot.ruleY([0])
-  ]
-})
+  let endLabels;
+  if (index === "Both") {
+    const djiSeries = plotData.filter(d => d.series === "DJI");
+    const spSeries = plotData.filter(d => d.series === "S&P 500");
+    endLabels = [
+      { ...djiSeries.at(-1), pct: ((djiSeries.at(-1).value - 1) * 100).toFixed(2) },
+      { ...spSeries.at(-1), pct: ((spSeries.at(-1).value - 1) * 100).toFixed(2) },
+    ];
+  } else {
+    const first = plotData[0];
+    const last = plotData.at(-1);
+    endLabels = first && last
+      ? [{ ...last, pct: ((last.value / first.value - 1) * 100).toFixed(2) }]
+      : [];
+  }
+
+  return Plot.plot({
+    title: index === "Both"
+      ? `DJI vs S&P 500 — Normalized (${yearRange})`
+      : index === "DJI"
+        ? `Dow Jones Industrial Average (${yearRange})`
+        : `S&P 500 (${yearRange})`,
+    width: 800,
+    height: 400,
+    marginRight: 100,
+    color: { legend: index === "Both", domain: ["DJI", "S&P 500"], range: ["steelblue", "darkorange"] },
+    x: { type: "time", label: "Date" },
+    y: { label: index === "Both" ? "Growth (1 = starting value)" : "Index Value", grid: true },
+    marks: [
+      Plot.lineY(plotData, { x: "date", y: "value", stroke: index === "Both" ? "series" : "steelblue", strokeWidth: 1.5 }),
+      Plot.dot(endLabels, { x: "date", y: "value", fill: d => +d.pct >= 0 ? "green" : "red", r: 4 }),
+      Plot.text(endLabels, {
+        x: "date", y: "value",
+        text: d => `${+d.pct >= 0 ? "+" : ""}${d.pct}%`,
+        fill: d => +d.pct >= 0 ? "green" : "red",
+        dx: 8, textAnchor: "start", fontWeight: "bold", fontSize: 13
+      }),
+      Plot.tip(plotData, Plot.pointerX({ x: "date", y: "value", title: d => index === "Both" ? `${d.series}: ${d.value.toFixed(2)}x` : d.value.toLocaleString() })),
+      Plot.ruleY([0])
+    ]
+  });
+}
 ```
 
 ## Macroeconomic Situation
