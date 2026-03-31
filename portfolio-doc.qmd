@@ -8,12 +8,27 @@ execute:
 The following document serves as a way to document my own thought process towards constructing a portfolio starting with 100% cash. I am using this document to force myself to articulate in words why and how I am investing in the way I am, rather than just vibes.
 
 ## Goals & Purpose
+
+### Primary goals
+These are non-negotiable.
+
 - Mostly buy and hold
     - I do not have the time to look at the market 24/7 and react to things
         - If I did anyway, I'd probably perform worse
     - I want to have an outlook where I cash out no earlier than 5 years from now
     - Also minimizes capital gains tax
-- Good risk-adjusted performance, Sharpe ratio of $\sim 0.8$
+- Beat the S&P500
+    - This is what we will **benchmark** our portfolio against
+    - If we can't beat the S&P500, what's the point?
+        - I think the way to do this is through better sector allocations (not over investing in a particular sector), and by removing shittier companies... but more on that later
+    - Note that this is extremely hard!!
+
+### Secondary goals
+These are great to have, but can be very difficult to achieve as a retail investor. Thus we try to get as close as possible, but understand we may not always reach these targets.
+
+- Good risk-adjusted performance: Sharpe ratio of $\sim 0.8$
+    - This is incredibly hard to do as a retail investor (we will probably not achieve this)
+        - The overall thing to take away from here is to always be aware of risk, and to do our best to reduce it
     - _Sharpe ratio_ is just a calculation that tells you how smooth your returns are ([more info](https://www.investopedia.com/terms/s/sharperatio.asp))
     - Below shows two portfolios, green and black. They both started with the same amount, and ended with the same return. Which would you prefer?
 
@@ -25,7 +40,10 @@ The following document serves as a way to document my own thought process toward
 ## Constraints
 
 - I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
-- No use of margin at all
+    - Rebalancing (adjusting portfolio allocation) should primarily happen through this mechanism, as opposed to selling stock
+- Max drawdown of $\textcolor{red}{-35\%}$
+    - How much of a fall am I genuinely able to stomach before I begin panic selling
+- No use of (Charles Schwab's) margin at all
     - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
         - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means your stock would need to outperform the market just to see a profit.
     - It's a terrible deal (at least the rates that Schwab sets, at a low interest it can very well be worth it)
@@ -38,6 +56,7 @@ The following document serves as a way to document my own thought process toward
 | $0\%$ gain | $\$1,000$ | $\$1,000 - \$1,118.25$ | $\textcolor{red}{-\$118.25}$ |
 | $-5\%$ loss | $\$950$ | $\$950 - \$1,118.25$ | $\textcolor{red}{-\$168.25}$ |
 | $-20\%$ loss | $\$800$ | $\$800 - \$1,118.25$ | $\textcolor{red}{-\$318.25}$ |
+
 
 ## Beliefs & Principles
 
