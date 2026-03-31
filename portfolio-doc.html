@@ -700,6 +700,67 @@ window.Quarto = {
 </ul></li>
 </ul></li>
 </ul>
+<p>The graphs below illustrate how combining two negatively correlated assets result in a much less risky portfolio:</p>
+<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;font-family:'Arial Black',sans-serif;">
+  <div class="preset-btns" style="margin-bottom:16px;">
+    <button class="preset-btn active" id="btn-corr" onclick="setCorr(true)">High Correlation (r ≈ +1)</button>
+    <button class="preset-btn" id="btn-neg" onclick="setCorr(false)">Inverse Correlation (r ≈ −1)</button>
+  </div>
+    <div id="corr-title" style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;margin-bottom:12px;color:#1a1a2e;">
+      PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">SIMILAR BEHAVIOR</span>
+    </div>
+    <svg id="combo-chart" viewbox="0 0 720 260" style="display:block;width:100%;background:#fafafa;border:1px solid #e8e8e8;"></svg>
+    <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:center;font-family:Georgia,serif;font-size:13px;">
+      <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#E8A020;border-radius:2px;"></div>Asset A</div>
+      <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#CC2233;border-radius:2px;"></div>Asset B</div>
+      <div style="display:flex;align-items:center;gap:6px;color:#222;font-weight:700;"><div style="width:28px;height:4px;background:#38C8E8;border-radius:2px;"></div>Portfolio (equal weight)</div>
+      <div style="margin-left:auto;color:#888;font-style:italic;">Correlation: <strong id="corr-label" style="color:#1a1a2e;">≈ +1.00</strong></div>
+    </div>
+</div>
+<script>
+(function(){
+  const W=720,H=260,PL=28,PR=28,PT=20,PB=24,N=200;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  function wave(freq,phase,amp,drift,noise){
+    return Array.from({length:N},(_,i)=>{
+      const t=i/(N-1);
+      return Math.sin(2*Math.PI*freq*t+phase)*amp
+           + Math.sin(2*Math.PI*freq*1.7*t+phase*1.3)*amp*0.35
+           + drift*t
+           + noise*Math.sin(i*7.3+phase*3)*0.3;
+    });
+  }
+  function path(vals,gMin,gMax){
+    return vals.map((v,i)=>`${i?'L':'M'}${(PL+i/(N-1)*cW).toFixed(1)},${(PT+(1-(v-gMin)/(gMax-gMin))*cH).toFixed(1)}`).join(' ');
+  }
+  function render(a,b){
+    const port=a.map((v,i)=>(v+b[i])/2);
+    const all=[...a,...b,...port];
+    const pad=0.08*(Math.max(...all)-Math.min(...all));
+    const lo=Math.min(...all)-pad, hi=Math.max(...all)+pad;
+    const svg=document.getElementById('combo-chart');
+    let h='';
+    for(let i=1;i<=4;i++) h+=`<line x1="${PL}" y1="${PT+i/5*cH}" x2="${W-PR}" y2="${PT+i/5*cH}" stroke="#e0e0e0" stroke-width="1"/>`;
+    h+=`<path d="${path(a,lo,hi)}" fill="none" stroke="#E8A020" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(b,lo,hi)}" fill="none" stroke="#CC2233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(port,lo,hi)}" fill="none" stroke="#38C8E8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg.innerHTML=h;
+  }
+  const aWave = wave(1.4,0,0.8,0.4,0.15);
+  window.setCorr = function(high){
+    const b = high ? wave(1.4,0.18,0.8,0.4,0.15) : wave(1.4,Math.PI,0.8,0.4,0.15);
+    render(aWave, b);
+    document.getElementById('corr-label').textContent = high ? '≈ +1.00' : '≈ −1.00';
+    document.getElementById('corr-title').innerHTML = high
+      ? 'PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">SIMILAR BEHAVIOR</span>'
+      : 'PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">NEGATIVELY CORRELATED BEHAVIOR</span>';
+    document.getElementById('btn-corr').classList.toggle('active', high);
+    document.getElementById('btn-neg').classList.toggle('active', !high);
+  };
+  setCorr(true);
+})();
+</script>
+<p>For a mathematical explanation, <a href="#sec-diversification">click here</a></p>
 <section id="the-sp-500-over-allocation-problem" class="level3">
 <h3 class="anchored" data-anchor-id="the-sp-500-over-allocation-problem">The S&amp;P 500 over-allocation problem</h3>
 </section>
@@ -765,19 +826,16 @@ window.Quarto = {
 </section>
 </section>
 <section id="sec-diversification" class="level3">
-<h3 class="anchored" data-anchor-id="sec-diversification">B: Why portfolios of lowly correlated assets are better</h3>
-<p>In the following examples, we’ll illustrate why combining two assets that do not correlate together, given positive returns, can result in a significantly more attractive portfolio</p>
-<section id="high-correlation" class="level4">
-<h4 class="anchored" data-anchor-id="high-correlation">High correlation</h4>
-</section>
-<section id="high-correlation-1" class="level4">
-<h4 class="anchored" data-anchor-id="high-correlation-1">High correlation</h4>
+<h3 class="anchored" data-anchor-id="sec-diversification">B: High vs inversely correlated assets in a portfolio</h3>
+<p>We’ll create two portfolios of two assets with the same risk and return. The only difference will be the correlation of both assets and how much weight they have in our portfolio.</p>
+<section id="high-correlation-r_ab-approx-1.00" class="level4">
+<h4 class="anchored" data-anchor-id="high-correlation-r_ab-approx-1.00">High correlation (<span class="math inline">\(r_{A,B} \approx 1.00\)</span>)</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Asset</th>
-<th>Return</th>
-<th>Risk</th>
+<th>Return (<span class="math inline">\(R\)</span>)</th>
+<th>Risk (<span class="math inline">\(\sigma\)</span>)</th>
 <th></th>
 </tr>
 </thead>
@@ -796,125 +854,42 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
-<p>Let <span class="math inline">\(\text{Correlation}_{A,B} = r_{A,B} = 1\)</span></p>
-<p>This means that the graphs could look something like this:</p>
-<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;font-family:'Arial Black',sans-serif;">
-  <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;margin-bottom:12px;color:#1a1a2e;">
-    PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">SIMILAR BEHAVIOR</span>
-  </div>
-  <svg id="corr-chart" viewbox="0 0 720 260" style="display:block;width:100%;background:#fafafa;border:1px solid #e8e8e8;"></svg>
-  <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:center;font-family:Georgia,serif;font-size:13px;">
-    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#E8A020;border-radius:2px;"></div>Asset A</div>
-    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#CC2233;border-radius:2px;"></div>Asset B</div>
-    <div style="display:flex;align-items:center;gap:6px;color:#222;font-weight:700;"><div style="width:28px;height:4px;background:#38C8E8;border-radius:2px;"></div>Portfolio (equal weight)</div>
-    <div style="margin-left:auto;color:#888;font-style:italic;">Correlation: <strong style="color:#1a1a2e;">≈ +1.00</strong></div>
-  </div>
-</div>
-<script>
-(function(){
-  const W=720,H=260,PL=28,PR=28,PT=20,PB=24,N=200;
-  const cW=W-PL-PR, cH=H-PT-PB;
-  function wave(freq,phase,amp,drift,noise){
-    return Array.from({length:N},(_,i)=>{
-      const t=i/(N-1);
-      return Math.sin(2*Math.PI*freq*t+phase)*amp
-           + Math.sin(2*Math.PI*freq*1.7*t+phase*1.3)*amp*0.35
-           + drift*t
-           + noise*Math.sin(i*7.3+phase*3)*0.3;
-    });
-  }
-  function path(vals,gMin,gMax){
-    return vals.map((v,i)=>`${i?'L':'M'}${(PL+i/(N-1)*cW).toFixed(1)},${(PT+(1-(v-gMin)/(gMax-gMin))*cH).toFixed(1)}`).join(' ');
-  }
-  function render(svgId,a,b){
-    const port=a.map((v,i)=>(v+b[i])/2);
-    const all=[...a,...b,...port];
-    const pad=0.08*(Math.max(...all)-Math.min(...all));
-    const lo=Math.min(...all)-pad, hi=Math.max(...all)+pad;
-    const svg=document.getElementById(svgId);
-    let h='';
-    for(let i=1;i<=4;i++) h+=`<line x1="${PL}" y1="${PT+i/5*cH}" x2="${W-PR}" y2="${PT+i/5*cH}" stroke="#e0e0e0" stroke-width="1"/>`;
-    h+=`<path d="${path(a,lo,hi)}" fill="none" stroke="#E8A020" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    h+=`<path d="${path(b,lo,hi)}" fill="none" stroke="#CC2233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    h+=`<path d="${path(port,lo,hi)}" fill="none" stroke="#38C8E8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-    svg.innerHTML=h;
-  }
-  render('corr-chart', wave(1.4,0,0.8,0.4,0.15), wave(1.4,0.18,0.8,0.4,0.15));
-})();
-</script>
+<p><span class="math display">\[\text{Reward}_\text{Portfolio} =  \bar{R}_p = W_A R_A + W_B R_B\]</span></p>
+<p><span class="math display">\[\bar{R}_p = (.5)(8\%) + (.5)(16\%) = 12\%\]</span></p>
+<p><span class="math display">\[\text{Risk}_p = \sigma_p = \sqrt{W_A^2 \sigma_A^2 + W_B^2 \sigma_B^2+ 2 W_A W_B \sigma_A \sigma_B r_{A, B}}\]</span></p>
+<p><span class="math display">\[\sigma_p = \sqrt{.5^2 .10^2 + .5^2 .30^2 + 2(.5)(.5)(.1)(.3)(1)} = .2 = 20\%\]</span></p>
 </section>
-<section id="inverse-correlation" class="level4">
-<h4 class="anchored" data-anchor-id="inverse-correlation">Inverse correlation</h4>
+<section id="inverse-correlation-r_cd-approx--1.00" class="level4">
+<h4 class="anchored" data-anchor-id="inverse-correlation-r_cd-approx--1.00">Inverse correlation (<span class="math inline">\(r_{C,D} \approx -1.00\)</span>)</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Asset</th>
-<th>Return</th>
-<th>Risk</th>
+<th>Return (<span class="math inline">\(R\)</span>)</th>
+<th>Risk (<span class="math inline">\(\sigma\)</span>)</th>
 <th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
+<td>C</td>
 <td><span class="math inline">\(8.00\%\)</span></td>
 <td><span class="math inline">\(10.00\%\)</span></td>
 <td></td>
 </tr>
 <tr class="even">
-<td>B</td>
+<td>D</td>
 <td><span class="math inline">\(16.00\%\)</span></td>
 <td><span class="math inline">\(30.00\%\)</span></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p>Let <span class="math inline">\(\text{Correlation}_{A,B} = r_{A,B} = -1\)</span></p>
-<p>This means that the graphs could look something like this:</p>
-<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;font-family:'Arial Black',sans-serif;">
-  <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;margin-bottom:12px;color:#1a1a2e;">
-    PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">NEGATIVELY CORRELATED BEHAVIOR</span>
-  </div>
-  <svg id="neg-chart" viewbox="0 0 720 260" style="display:block;width:100%;background:#fafafa;border:1px solid #e8e8e8;"></svg>
-  <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:center;font-family:Georgia,serif;font-size:13px;">
-    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#E8A020;border-radius:2px;"></div>Asset A</div>
-    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#CC2233;border-radius:2px;"></div>Asset B</div>
-    <div style="display:flex;align-items:center;gap:6px;color:#222;font-weight:700;"><div style="width:28px;height:4px;background:#38C8E8;border-radius:2px;"></div>Portfolio (equal weight)</div>
-    <div style="margin-left:auto;color:#888;font-style:italic;">Correlation: <strong style="color:#1a1a2e;">≈ −1.00</strong></div>
-  </div>
-</div>
-<script>
-(function(){
-  const W=720,H=260,PL=28,PR=28,PT=20,PB=24,N=200;
-  const cW=W-PL-PR, cH=H-PT-PB;
-  function wave(freq,phase,amp,drift,noise){
-    return Array.from({length:N},(_,i)=>{
-      const t=i/(N-1);
-      return Math.sin(2*Math.PI*freq*t+phase)*amp
-           + Math.sin(2*Math.PI*freq*1.7*t+phase*1.3)*amp*0.35
-           + drift*t
-           + noise*Math.sin(i*7.3+phase*3)*0.3;
-    });
-  }
-  function path(vals,gMin,gMax){
-    return vals.map((v,i)=>`${i?'L':'M'}${(PL+i/(N-1)*cW).toFixed(1)},${(PT+(1-(v-gMin)/(gMax-gMin))*cH).toFixed(1)}`).join(' ');
-  }
-  function render(svgId,a,b){
-    const port=a.map((v,i)=>(v+b[i])/2);
-    const all=[...a,...b,...port];
-    const pad=0.08*(Math.max(...all)-Math.min(...all));
-    const lo=Math.min(...all)-pad, hi=Math.max(...all)+pad;
-    const svg=document.getElementById(svgId);
-    let h='';
-    for(let i=1;i<=4;i++) h+=`<line x1="${PL}" y1="${PT+i/5*cH}" x2="${W-PR}" y2="${PT+i/5*cH}" stroke="#e0e0e0" stroke-width="1"/>`;
-    h+=`<path d="${path(a,lo,hi)}" fill="none" stroke="#E8A020" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    h+=`<path d="${path(b,lo,hi)}" fill="none" stroke="#CC2233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-    h+=`<path d="${path(port,lo,hi)}" fill="none" stroke="#38C8E8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-    svg.innerHTML=h;
-  }
-  render('neg-chart', wave(1.4,0,0.8,0.4,0.15), wave(1.4,Math.PI,0.8,0.4,0.15));
-})();
-</script>
+<p><span class="math display">\[\text{Reward}_\text{Portfolio} =  \bar{R}_p = W_C R_C + W_D R_D\]</span></p>
+<p><span class="math display">\[\bar{R}_p = (.75)(8\%) + (.25)(16\%) = 10\%\]</span></p>
+<p><span class="math display">\[\text{Risk}_p = \sigma_p = \sqrt{W_C^2 \sigma_C^2 + W_D^2 \sigma_D^2+ 2 W_C W_D \sigma_C \sigma_D r_{C, D}}\]</span></p>
+<p><span class="math display">\[\sigma_p = \sqrt{.75^2 .10^2 + .25^2 .30^2 + 2(.75)(.25)(.1)(.3)(-1)} = 0 = 0\%\]</span></p>
+<p>We see how by combining two inversely correlated assets, and sizing them appropriately, we end with a portfolio with significantly reduced risk, even if it’s at the cost of a little less reward. In practice, it’s impossible to find two assets that are perfectly inversely correlated. The point however stands, and we try to look for assets with inverse or minimal correlation.</p>
 </section>
 </section>
 </section>
