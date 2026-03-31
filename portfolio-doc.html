@@ -174,7 +174,7 @@ window.Quarto = {
 </ul></li>
 <li><em>Sharpe ratio</em> is just a calculation that tells you how smooth your returns are (<a href="https://www.investopedia.com/terms/s/sharperatio.asp">more info</a>)
 <ul>
-<li>Is a function of standard deviation</li>
+<li>Is a function of <a href="#sec-std-dev"><em>standard deviation</em></a></li>
 </ul></li>
 <li>Below shows two portfolios, green and black. They both started with the same amount, and ended with the same return. Which would you prefer?</li>
 </ul></li>
@@ -685,7 +685,7 @@ window.Quarto = {
 <li>Return of each asset class</li>
 <li>Risk of each asset class
 <ul>
-<li>We use <em>standard deviation</em> as our main metric to define what ‘risk’ is</li>
+<li>We use <a href="#sec-std-dev"><em>standard deviation</em></a> as our primary measure of risk</li>
 <li>We can also use <em>maximum drawdown</em> as another metric</li>
 </ul></li>
 <li>Correlation of the asset classes
@@ -716,10 +716,53 @@ window.Quarto = {
 <section id="risk-management" class="level2">
 <h2 class="anchored" data-anchor-id="risk-management">Risk Management</h2>
 </section>
-<section id="appendix" class="level2">
-<h2 class="anchored" data-anchor-id="appendix">Appendix</h2>
-<section id="a-standard-deviation" class="level3">
-<h3 class="anchored" data-anchor-id="a-standard-deviation">A: Standard Deviation</h3>
+<section id="sec-appendix" class="level2">
+<h2 class="anchored" data-anchor-id="sec-appendix">Appendix</h2>
+<section id="sec-std-dev" class="level3">
+<h3 class="anchored" data-anchor-id="sec-std-dev">A: Standard deviation as a measurement of ‘risk’</h3>
+<ul>
+<li>Risk is defined as the degree to which the annual return varies from the historic return</li>
+</ul>
+<p><span class="math display">\[\text{Standard Deviation} = \sigma = \sqrt{\frac{\sum^{n}_{1}(X - \bar{X})^2}{n-1}}\]</span></p>
+<section id="example" class="level4">
+<h4 class="anchored" data-anchor-id="example">Example</h4>
+<p>Consider two assets <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, who both have the same average annual return of <span class="math inline">\(10\%\)</span> over a 5 year period:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Asset</th>
+<th>Yr 1</th>
+<th>Yr 2</th>
+<th>Yr 3</th>
+<th>Yr 4</th>
+<th>Yr 5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>8%</td>
+<td>12%</td>
+<td>11%</td>
+<td>9%</td>
+<td>10%</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>28%</td>
+<td>−11%</td>
+<td>22%</td>
+<td>−6%</td>
+<td>17%</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\text{Mean}_A = \bar{X}_A = \frac{0.08 + 0.12 + 0.11 + 0.09 + 0.10}{5} = 0.10\]</span></p>
+<p><span class="math display">\[\small\sigma_{A} = \sqrt{\frac{(0.08 - 0.10)^2 + (0.12 - 0.10)^2 + (0.11 - 0.10)^2 + (0.09 - 0.10)^2 + (0.10 - 0.10)^2}{4}} = 0.0158\ldots \approx 2\%\]</span></p>
+<p><span class="math display">\[\text{Mean}_B = \bar{X}_B = \frac{0.28 + (-0.11) + 0.22 + (-0.06) + 0.17}{5} = 0.10\]</span></p>
+<p><span class="math display">\[\small\sigma_{B} = \sqrt{\frac{(0.28 - 0.10)^2 + (-0.11 - 0.10)^2 + (0.22 - 0.10)^2 + (-0.06 - 0.10)^2 + (0.17 - 0.10)^2}{4}} = 0.1742\ldots \approx 17\%\]</span></p>
+<p>We say that asset <span class="math inline">\(B\)</span> is more than <span class="math inline">\(8 \times\)</span> riskier than asset <span class="math inline">\(A\)</span>.</p>
+</section>
 </section>
 </section>
 

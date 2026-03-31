@@ -32,7 +32,7 @@ These are great to have, but can be very difficult to achieve as a retail invest
     - This is incredibly hard to do as a retail investor (we will probably not achieve this)
         - The overall thing to take away from here is to always be aware of risk, and to do our best to reduce it
     - _Sharpe ratio_ is just a calculation that tells you how smooth your returns are ([more info](https://www.investopedia.com/terms/s/sharperatio.asp))
-        - Is a function of standard deviation
+        - Is a function of [_standard deviation_](#sec-std-dev)
     - Below shows two portfolios, green and black. They both started with the same amount, and ended with the same return. Which would you prefer?
 
 
@@ -409,7 +409,7 @@ Afterwards, we will calculate the risk and reward of our portfolio comprised of 
 
 - Return of each asset class
 - Risk of each asset class
-    - We use _standard deviation_ as our main metric to define what 'risk' is
+    - We use [_standard deviation_](#sec-std-dev) as our primary measure of risk
     - We can also use _maximum drawdown_ as another metric
 - Correlation of the asset classes
     - We want our asset classes to have low correlation with one another
@@ -428,6 +428,29 @@ Afterwards, we will calculate the risk and reward of our portfolio comprised of 
 
 ## Risk Management
 
-## Appendix
+## Appendix {#sec-appendix}
 
-### A: Standard Deviation
+### A: Standard deviation as a measurement of 'risk' {#sec-std-dev}
+
+- Risk is defined as the degree to which the annual return varies from the historic return
+
+$$\text{Standard Deviation} = \sigma = \sqrt{\frac{\sum^{n}_{1}(X - \bar{X})^2}{n-1}}$$
+
+#### Example
+
+Consider two assets $A$ and $B$, who both have the same average annual return of $10\%$ over a 5 year period:
+
+| Asset | Yr 1 | Yr 2 | Yr 3 | Yr 4 | Yr 5 |
+|---|---|---|---|---|---|
+| A | 8% | 12% | 11% | 9% | 10% |
+| B | 28% | −11% | 22% | −6% | 17% |
+
+$$\text{Mean}_A = \bar{X}_A = \frac{0.08 + 0.12 + 0.11 + 0.09 + 0.10}{5} = 0.10$$
+
+$$\small\sigma_{A} = \sqrt{\frac{(0.08 - 0.10)^2 + (0.12 - 0.10)^2 + (0.11 - 0.10)^2 + (0.09 - 0.10)^2 + (0.10 - 0.10)^2}{4}} = 0.0158\ldots \approx 2\%$$
+
+$$\text{Mean}_B = \bar{X}_B = \frac{0.28 + (-0.11) + 0.22 + (-0.06) + 0.17}{5} = 0.10$$
+
+$$\small\sigma_{B} = \sqrt{\frac{(0.28 - 0.10)^2 + (-0.11 - 0.10)^2 + (0.22 - 0.10)^2 + (-0.06 - 0.10)^2 + (0.17 - 0.10)^2}{4}} = 0.1742\ldots \approx 17\%$$
+
+We say that asset $B$ is more than $8 \times$ riskier than asset $A$.
