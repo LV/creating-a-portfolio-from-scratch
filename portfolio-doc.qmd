@@ -269,9 +269,14 @@ plotData = {
   if (index === "Both") {
     const djiSeries = plotData.filter(d => d.series === "DJI");
     const spSeries = plotData.filter(d => d.series === "S&P 500");
+    const djiLast = djiSeries.at(-1);
+    const spLast = spSeries.at(-1);
+    const yValues = plotData.map(d => d.value);
+    const yRange = Math.max(...yValues) - Math.min(...yValues);
+    const close = Math.abs(djiLast.value - spLast.value) < yRange * 0.05;
     endLabels = [
-      { ...djiSeries.at(-1), pct: ((djiSeries.at(-1).value - 1) * 100).toFixed(2) },
-      { ...spSeries.at(-1), pct: ((spSeries.at(-1).value - 1) * 100).toFixed(2) },
+      { ...djiLast, pct: ((djiLast.value - 1) * 100).toFixed(2), dyOffset: close ? -10 : 0 },
+      { ...spLast,  pct: ((spLast.value  - 1) * 100).toFixed(2), dyOffset: close ?  10 : 0 },
     ];
   } else {
     const first = plotData[0];
@@ -303,7 +308,8 @@ plotData = {
         x: "date", y: "value",
         text: d => `${+d.pct >= 0 ? "+" : ""}${d.pct}%`,
         fill: d => +d.pct >= 0 ? "green" : "red",
-        dx: 8, textAnchor: "start", fontWeight: "bold", fontSize: 13
+        dx: 8, dy: d => d.dyOffset ?? 0,
+        textAnchor: "start", fontWeight: "bold", fontSize: 13
       }),
       Plot.ruleX(visibleEvents, {
         x: "date",
