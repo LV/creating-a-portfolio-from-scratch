@@ -1,3 +1,4 @@
+
 ---
 title: "Constructing a Portfolio from Scratch"
 format: html
@@ -460,6 +461,7 @@ We say that asset $B$ is more than $8 \times$ riskier than asset $A$.
 In the following examples, we'll illustrate why combining two assets that do not correlate together, given positive returns, can result in a significantly more attractive portfolio
 
 #### High correlation
+#### High correlation
 
 | Asset | Return | Risk |
 |---|---|---|---|
@@ -470,4 +472,107 @@ Let $\text{Correlation}_{A,B} = r_{A,B} = 1$
 
 This means that the graphs could look something like this:
 
-#### High correlation
+```{=html}
+<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;font-family:'Arial Black',sans-serif;">
+  <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;margin-bottom:12px;color:#1a1a2e;">
+    PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">SIMILAR BEHAVIOR</span>
+  </div>
+  <svg id="corr-chart" viewBox="0 0 720 260" style="display:block;width:100%;background:#fafafa;border:1px solid #e8e8e8;"></svg>
+  <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:center;font-family:Georgia,serif;font-size:13px;">
+    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#E8A020;border-radius:2px;"></div>Asset A</div>
+    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#CC2233;border-radius:2px;"></div>Asset B</div>
+    <div style="display:flex;align-items:center;gap:6px;color:#222;font-weight:700;"><div style="width:28px;height:4px;background:#38C8E8;border-radius:2px;"></div>Portfolio (equal weight)</div>
+    <div style="margin-left:auto;color:#888;font-style:italic;">Correlation: <strong style="color:#1a1a2e;">≈ +1.00</strong></div>
+  </div>
+</div>
+<script>
+(function(){
+  const W=720,H=260,PL=28,PR=28,PT=20,PB=24,N=200;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  function wave(freq,phase,amp,drift,noise){
+    return Array.from({length:N},(_,i)=>{
+      const t=i/(N-1);
+      return Math.sin(2*Math.PI*freq*t+phase)*amp
+           + Math.sin(2*Math.PI*freq*1.7*t+phase*1.3)*amp*0.35
+           + drift*t
+           + noise*Math.sin(i*7.3+phase*3)*0.3;
+    });
+  }
+  function path(vals,gMin,gMax){
+    return vals.map((v,i)=>`${i?'L':'M'}${(PL+i/(N-1)*cW).toFixed(1)},${(PT+(1-(v-gMin)/(gMax-gMin))*cH).toFixed(1)}`).join(' ');
+  }
+  function render(svgId,a,b){
+    const port=a.map((v,i)=>(v+b[i])/2);
+    const all=[...a,...b,...port];
+    const pad=0.08*(Math.max(...all)-Math.min(...all));
+    const lo=Math.min(...all)-pad, hi=Math.max(...all)+pad;
+    const svg=document.getElementById(svgId);
+    let h='';
+    for(let i=1;i<=4;i++) h+=`<line x1="${PL}" y1="${PT+i/5*cH}" x2="${W-PR}" y2="${PT+i/5*cH}" stroke="#e0e0e0" stroke-width="1"/>`;
+    h+=`<path d="${path(a,lo,hi)}" fill="none" stroke="#E8A020" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(b,lo,hi)}" fill="none" stroke="#CC2233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(port,lo,hi)}" fill="none" stroke="#38C8E8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg.innerHTML=h;
+  }
+  render('corr-chart', wave(1.4,0,0.8,0.4,0.15), wave(1.4,0.18,0.8,0.4,0.15));
+})();
+</script>
+```
+
+#### Inverse correlation
+
+| Asset | Return | Risk |
+|---|---|---|---|
+| A | $8.00\%$ | $10.00\%$ |
+| B | $16.00\%$ | $30.00\%$ |
+
+Let $\text{Correlation}_{A,B} = r_{A,B} = -1$
+
+This means that the graphs could look something like this:
+
+```{=html}
+<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;font-family:'Arial Black',sans-serif;">
+  <div style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;line-height:1.3;margin-bottom:12px;color:#1a1a2e;">
+    PORTFOLIO COMPOSED OF ASSETS WITH <span style="color:#E8A020;">NEGATIVELY CORRELATED BEHAVIOR</span>
+  </div>
+  <svg id="neg-chart" viewBox="0 0 720 260" style="display:block;width:100%;background:#fafafa;border:1px solid #e8e8e8;"></svg>
+  <div style="display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;align-items:center;font-family:Georgia,serif;font-size:13px;">
+    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#E8A020;border-radius:2px;"></div>Asset A</div>
+    <div style="display:flex;align-items:center;gap:6px;color:#444;"><div style="width:24px;height:3px;background:#CC2233;border-radius:2px;"></div>Asset B</div>
+    <div style="display:flex;align-items:center;gap:6px;color:#222;font-weight:700;"><div style="width:28px;height:4px;background:#38C8E8;border-radius:2px;"></div>Portfolio (equal weight)</div>
+    <div style="margin-left:auto;color:#888;font-style:italic;">Correlation: <strong style="color:#1a1a2e;">≈ −1.00</strong></div>
+  </div>
+</div>
+<script>
+(function(){
+  const W=720,H=260,PL=28,PR=28,PT=20,PB=24,N=200;
+  const cW=W-PL-PR, cH=H-PT-PB;
+  function wave(freq,phase,amp,drift,noise){
+    return Array.from({length:N},(_,i)=>{
+      const t=i/(N-1);
+      return Math.sin(2*Math.PI*freq*t+phase)*amp
+           + Math.sin(2*Math.PI*freq*1.7*t+phase*1.3)*amp*0.35
+           + drift*t
+           + noise*Math.sin(i*7.3+phase*3)*0.3;
+    });
+  }
+  function path(vals,gMin,gMax){
+    return vals.map((v,i)=>`${i?'L':'M'}${(PL+i/(N-1)*cW).toFixed(1)},${(PT+(1-(v-gMin)/(gMax-gMin))*cH).toFixed(1)}`).join(' ');
+  }
+  function render(svgId,a,b){
+    const port=a.map((v,i)=>(v+b[i])/2);
+    const all=[...a,...b,...port];
+    const pad=0.08*(Math.max(...all)-Math.min(...all));
+    const lo=Math.min(...all)-pad, hi=Math.max(...all)+pad;
+    const svg=document.getElementById(svgId);
+    let h='';
+    for(let i=1;i<=4;i++) h+=`<line x1="${PL}" y1="${PT+i/5*cH}" x2="${W-PR}" y2="${PT+i/5*cH}" stroke="#e0e0e0" stroke-width="1"/>`;
+    h+=`<path d="${path(a,lo,hi)}" fill="none" stroke="#E8A020" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(b,lo,hi)}" fill="none" stroke="#CC2233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    h+=`<path d="${path(port,lo,hi)}" fill="none" stroke="#38C8E8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    svg.innerHTML=h;
+  }
+  render('neg-chart', wave(1.4,0,0.8,0.4,0.15), wave(1.4,Math.PI,0.8,0.4,0.15));
+})();
+</script>
+```
