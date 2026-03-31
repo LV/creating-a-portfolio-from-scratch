@@ -46,7 +46,7 @@ These are great to have, but can be very difficult to achieve as a retail invest
 
 Despite how ugly things in the world may seem, it is difficult to argue against putting money into the market over a long enough period of a time ([source](https://www.macrotrends.net/datasets/1319/dow-jones-100-year-historical-chart)).
 
-Try any of the presets, or choose your own dates
+Try any of the presets, or choose your own dates:
 
 ```{=html}
 <style>
@@ -436,7 +436,7 @@ The graphs below illustrate how combining two negatively correlated assets resul
 </script>
 ```
 
-For a mathematical explanation, [click here](#sec-diversification)
+For a mathematical explanation, [click here](#sec-diversification).
 
 ### How should I allocate my portfolio?
 
