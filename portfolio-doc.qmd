@@ -12,6 +12,8 @@ The following document serves as a way to document my own thought process toward
 ### Primary goals
 These are non-negotiable.
 
+> "The stock market is a device for transferring money from the impatient to the patient" — Warren Buffet
+
 - Mostly buy and hold
     - I do not have the time to look at the market 24/7 and react to things
         - If I did anyway, I'd probably perform worse
@@ -30,6 +32,7 @@ These are great to have, but can be very difficult to achieve as a retail invest
     - This is incredibly hard to do as a retail investor (we will probably not achieve this)
         - The overall thing to take away from here is to always be aware of risk, and to do our best to reduce it
     - _Sharpe ratio_ is just a calculation that tells you how smooth your returns are ([more info](https://www.investopedia.com/terms/s/sharperatio.asp))
+        - Is a function of standard deviation
     - Below shows two portfolios, green and black. They both started with the same amount, and ended with the same return. Which would you prefer?
 
 
@@ -391,6 +394,32 @@ plotData = {
 }
 ```
 
+## Asset Allocation
+
+> "Asset Allocation is more than 100% of an Investment Portfolio's Performance" — David Swensen, CIO of Yale's Endowment; widely considered the GOAT of institutional investing
+
+> "If I'm an investor, the most important thing you can have is a good strategic allocation mix" — Ray Dalio, CIO and Founder of Bridgewater Associates
+
+With our main objective being to maximize our risk-adjusted returns, we'll need to do a handful of things, including:
+
+- Define our asset classes
+- Select our indices
+
+Afterwards, we will calculate the risk and reward of our portfolio comprised of our selected asset classes, via the following metrics:
+
+- Return of each asset class
+- Risk of each asset class
+    - We use _standard deviation_ as our main metric to define what 'risk' is
+    - We can also use _maximum drawdown_ as another metric
+- Correlation of the asset classes
+    - We want our asset classes to have low correlation with one another
+        - If one asset drops, we want our other assets to either be unaffected or increase, with the overall effect being that we reduce the volatility of our portfolio
+            - This is the mathematical basis behind _diversification_
+        - Note that during 'tail events' (like a crisis), these assumptions of assets being lowly correlated to each other tend to not hold (e.g. a massive sell-off)
+
+
+### The S&P 500 over-allocation problem
+
 ## Macroeconomic Situation
 
 ## Sector & Thematic Views
@@ -398,3 +427,7 @@ plotData = {
 ## Individual Positions
 
 ## Risk Management
+
+## Appendix
+
+### A: Standard Deviation
