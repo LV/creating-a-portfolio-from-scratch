@@ -7,7 +7,7 @@ execute:
 
 The following document serves as a way to document my own thought process towards constructing a portfolio starting with 100% cash. I am using this document to force myself to articulate in words why and how I am investing in the way I am, rather than just vibes.
 
-## Goals & Purpose
+## Investment Objectives
 
 ### Primary goals
 These are non-negotiable.
@@ -585,6 +585,8 @@ We can use the legendary book _A Random Walk Down Wall Street_ to get a starting
   return wrapper;
 }
 ```
+
+This allocation also closely resembles that of the **LifePath** funds (commonly offered in 401k plans).
 
 ### The S&P 500 over-allocation problem
 
