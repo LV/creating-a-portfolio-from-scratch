@@ -483,6 +483,133 @@ The graphs below illustrate how combining two negatively correlated assets resul
 
 For a mathematical explanation, [click here](#sec-diversification)
 
+### How should I allocate my portfolio?
+
+We can use the legendary book _A Random Walk Down Wall Street_ to get a starting point on how to allocate our portfolio:
+
+```{ojs}
+{
+  const allData = {
+    "Mid 20s": [
+      { label: "Stocks",               value: 70, color: "steelblue",  note: "One-half in U.S. stocks with good representation of smaller growth companies, one-half international stocks, including emerging markets." },
+      { label: "Bonds & Bond Subs.",   value: 15, color: "darkorange", note: "No-load high-grade corporate bond fund, some Treasury inflation protection securities, foreign bonds, dividend growth stocks." },
+      { label: "Real Estate",          value: 10, color: "seagreen",   note: "Portfolio of REITs." },
+      { label: "Cash",                 value: 5,  color: "#aaa",       note: "Money-market fund or short-term bond fund (average maturity 1 to 1½ years)." },
+    ],
+    "Late 30s – Early 40s": [
+      { label: "Stocks",               value: 65, color: "steelblue",  note: "One-half in U.S. stocks with good representation of smaller growth companies, one-half international stocks, including emerging markets." },
+      { label: "Bonds & Bond Subs.",   value: 20, color: "darkorange", note: "No-load high-grade corporate bond fund, some Treasury inflation protection securities, foreign bonds, dividend growth stocks." },
+      { label: "Real Estate",          value: 10, color: "seagreen",   note: "Portfolio of REITs." },
+      { label: "Cash",                 value: 5,  color: "#aaa",       note: "Money-market fund or short-term bond fund (average maturity 1 to 1½ years)." },
+    ],
+    "Mid-Fifties": [
+      { label: "Stocks",               value: 55,   color: "steelblue",  note: "One-half in U.S. stocks with good representation of smaller growth companies, one-half international stocks, including emerging markets." },
+      { label: "Bonds & Bond Subs.",   value: 27.5, color: "darkorange", note: "No-load high-grade corporate bond fund, some Treasury inflation protection securities, foreign bonds, dividend growth stocks." },
+      { label: "Real Estate",          value: 12.5, color: "seagreen",   note: "Portfolio of REITs." },
+      { label: "Cash",                 value: 5,    color: "#aaa",       note: "Money-market fund or short-term bond fund (average maturity 1 to 1½ years)." },
+    ],
+    "Late 60s & Beyond": [
+      { label: "Stocks",               value: 40, color: "steelblue",  note: "One-half in U.S. stocks with good representation of smaller growth companies; one-half international stocks, including emerging markets." },
+      { label: "Bonds & Bond Subs.",   value: 35, color: "darkorange", note: "No-load high-grade corporate bond fund, some Treasury inflation protection securities, foreign bonds, dividend growth stocks." },
+      { label: "Real Estate",          value: 15, color: "seagreen",   note: "Portfolio of REITs." },
+      { label: "Cash",                 value: 10, color: "#aaa",       note: "Money-market fund or short-term bond fund (average maturity 1 to 1½ years)." },
+    ],
+  };
+
+  const descriptions = {
+    "Mid 20s":               "Lifestyle: Fast, aggressive. With a steady stream of earnings, capacity for risk is fairly high. Need discipline of payroll savings to build nest egg.",
+    "Late 30s – Early 40s": "Lifestyle: Midlife crisis. For childless career couples, capacity for risk is still quite high. Risk options vanishing for those with college tuitions looming.",
+    "Mid-Fifties":           "Lifestyle: Many still reeling from college tuitions. No matter what the lifestyle, this age group must start thinking about retirement and the need for income protection.",
+    "Late 60s & Beyond":    "Lifestyle: Enjoying leisure activities but also guarding against major health costs. Little or no capacity for risk.",
+  };
+
+  const options = Object.keys(allData);
+  let currentAge = options[0];
+
+  function renderSVG(age) {
+    const data = allData[age];
+    const noteWidth = 400;
+    const hasNotes = data.some(d => d.note);
+    const itemHeight = hasNotes ? 88 : 28;
+    const radius = 110;
+    const legendX = radius * 2 + 48;
+    const legendHeight = data.length * itemHeight;
+    const descHeight = 48;
+    const height = Math.max(radius * 2 + 40, legendHeight + 40) + descHeight;
+    const width = legendX + noteWidth + 16;
+    const pieX = radius + 20, pieY = descHeight + (height - descHeight) / 2;
+
+    const pie = d3.pie().value(d => d.value).sort(null)(data);
+    const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+    const svg = d3.create("svg")
+      .attr("viewBox", `0 0 ${width} ${height}`)
+      .attr("width", width)
+      .attr("height", height);
+
+    svg.append("foreignObject")
+      .attr("x", 0).attr("y", 0).attr("width", width).attr("height", descHeight)
+      .append("xhtml:div")
+      .style("font-size", "12px").style("color", "#555").style("line-height", "1.5")
+      .style("font-family", "inherit").style("font-style", "italic")
+      .text(descriptions[age]);
+
+    const g = svg.append("g").attr("transform", `translate(${pieX},${pieY})`);
+
+    g.selectAll("path").data(pie).join("path")
+      .attr("d", arc).attr("fill", d => d.data.color)
+      .attr("stroke", "white").attr("stroke-width", 2);
+
+    const labelArc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 0.6);
+    g.selectAll("text.slice-label").data(pie).join("text")
+      .attr("class", "slice-label")
+      .attr("transform", d => `translate(${labelArc.centroid(d)})`)
+      .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
+      .attr("font-size", 12).attr("fill", "white").attr("font-weight", "bold")
+      .text(d => `${d.data.value}%`);
+
+    const legendStartY = descHeight + (height - descHeight) / 2 - legendHeight / 2;
+    const legend = svg.append("g").attr("transform", `translate(${legendX}, ${legendStartY})`);
+    const legendItem = legend.selectAll("g").data(data).join("g")
+      .attr("transform", (d, i) => `translate(0, ${i * itemHeight})`);
+
+    legendItem.append("rect").attr("width", 14).attr("height", 14).attr("rx", 2).attr("fill", d => d.color);
+    legendItem.append("text").attr("x", 20).attr("y", 11)
+      .attr("font-size", 13).attr("font-weight", "600").attr("fill", "#222")
+      .text(d => `${d.label} — ${d.value}%`);
+    legendItem.filter(d => d.note).append("foreignObject")
+      .attr("x", 20).attr("y", 20).attr("width", noteWidth).attr("height", itemHeight - 22)
+      .append("xhtml:div")
+      .style("font-size", "11px").style("color", "#888").style("line-height", "1.45")
+      .style("font-family", "inherit").text(d => d.note);
+
+    return svg.node();
+  }
+
+  const chartDiv = html`<div></div>`;
+  chartDiv.appendChild(renderSVG(currentAge));
+
+  const buttons = options.map(opt => {
+    const b = html`<button class="index-btn${opt === currentAge ? " active" : ""}">${opt}</button>`;
+    b.addEventListener("click", () => {
+      currentAge = opt;
+      wrapper.querySelectorAll(".index-btn").forEach(btn => btn.classList.remove("active"));
+      b.classList.add("active");
+      chartDiv.innerHTML = "";
+      chartDiv.appendChild(renderSVG(opt));
+    });
+    return b;
+  });
+
+  const wrapper = html`<div style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:20px 24px 14px;margin:16px 0;">
+    <div class="index-toggle">${buttons}</div>
+    ${chartDiv}
+  </div>`;
+
+  return wrapper;
+}
+```
+
 ### The S&P 500 over-allocation problem
 
 ## Macroeconomic Situation
