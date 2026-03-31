@@ -149,8 +149,8 @@ function dateInput(label, value) {
 }
 
 viewof dateRange = {
-  const start = dateInput("From", "1914-12-31");
-  const end = dateInput("To", "2026-03-27");
+  const start = dateInput("From", "1925-01-01");
+  const end = dateInput("To", "1955-12-31");
 
   const presets = [
     { label: "1926 – 1955", from: "1926-01-01", to: "1955-12-31" },
@@ -175,7 +175,7 @@ viewof dateRange = {
 
   const row = html`<div class="date-inputs-row">${start}${end}</div>`;
   const container = html`<div>${btns}${row}</div>`;
-  container.value = { start: new Date("1914-12-31"), end: new Date("2026-03-27") };
+  container.value = { start: new Date("1925-01-01"), end: new Date("1955-12-31") };
 
   start.addEventListener("input", () => {
     container.value = { ...container.value, start: start.value };
@@ -212,6 +212,38 @@ events = [
   { date: new Date("1932-07-08"), name: "Great Depression bottom", detail: "−89% from the 1929 peak" },
   { date: new Date("1933-03-01"), name: "Peak unemployment", detail: "US unemployment reaches 25%" },
   { date: new Date("1939-09-01"), name: "WWII begins", detail: "Germany invades Poland" },
+  { date: new Date("1940-09-07"), name: "The Blitz begins", detail: "Germany begins bombing Britain" },
+  { date: new Date("1941-12-07"), name: "Pearl Harbor", detail: "US enters WWII" },
+  { date: new Date("1950-06-25"), name: "Korean War begins", detail: "N. Korea invades S. Korea" },
+  { date: new Date("1962-10-16"), name: "Cuban Missile Crisis", detail: "13 days on the brink of nuclear war" },
+  { date: new Date("1963-11-22"), name: "JFK Assassinated", detail: "NYSE halts trading" },
+  { date: new Date("1964-08-07"), name: "Gulf of Tonkin", detail: "US escalates into Vietnam War" },
+  { date: new Date("1968-12-03"), name: "Vietnam bear market begins", detail: "Dow falls ~35% over 18 months" },
+  { date: new Date("1970-05-26"), name: "Vietnam bear market bottom", detail: "−35% from Dec 1968 peak" },
+  { date: new Date("1971-08-15"), name: "Nixon ends gold standard", detail: "US abandons Bretton Woods; inflation unleashed" },
+  { date: new Date("1973-10-17"), name: "Oil embargo begins", detail: "Stagflation; Dow drops ~45%" },
+  { date: new Date("1980-03-01"), name: "Inflation peaks at 14.8%", detail: "Fed raises rates to 20%" },
+  { date: new Date("1981-09-30"), name: "10-year Treasury hits 15.8%", detail: "Bonds crush stocks in appeal" },
+  { date: new Date("1981-10-09"), name: "30-year mortgage hits 18.45%", detail: "Housing market freezes" },
+  { date: new Date("1987-10-19"), name: "Black Monday", detail: "Dow drops 22.6% in a single day" },
+  { date: new Date("1990-08-02"), name: "Gulf War begins", detail: "Iraq invades Kuwait; Dow -20%" },
+  { date: new Date("1997-10-27"), name: "Asian financial crisis", detail: "Dow drops ~13% in a week" },
+  { date: new Date("1998-08-17"), name: "Russia debt default", detail: "LTCM collapse; Fed intervenes" },
+  { date: new Date("2000-03-10"), name: "Dot-com bubble bursts", detail: "NASDAQ falls 78% peak to trough" },
+  { date: new Date("2008-03-14"), name: "Bear Stearns rescued", detail: "JPMorgan buys for $2/share; first 2008 domino" },
+  { date: new Date("2008-09-15"), name: "Lehman Brothers collapse", detail: "Dow loses 54% peak to trough" },
+  { date: new Date("2008-09-17"), name: "AIG bailout", detail: "Fed bails out AIG for $85B" },
+  { date: new Date("2011-08-05"), name: "US credit downgraded", detail: "S&P cuts US from AAA to AA+" },
+  { date: new Date("2011-07-01"), name: "Eurozone debt crisis", detail: "Greece near default" },
+  { date: new Date("2013-05-22"), name: "Taper tantrum", detail: "Fed hints at QE tapering" },
+  { date: new Date("2014-06-01"), name: "Oil price crash", detail: "Oil falls from $100 to <$30" },
+  { date: new Date("2001-09-11"), name: "9/11", detail: "NYSE closed 4 days; Dow -7.1% on reopening" },
+  { date: new Date("2002-10-09"), name: "Dot-com bear market bottom", detail: "Dow down 38% from 2000 peak" },
+  { date: new Date("2009-03-09"), name: "2008 bear market bottom", detail: "Dow hits 6,547; -54% from 2007 peak" },
+  { date: new Date("2015-08-24"), name: "China market crash", detail: "Shanghai -40%; global selloff" },
+  { date: new Date("2020-02-20"), name: "COVID-19 crash", detail: "Fastest 30% Dow drop in history" },
+  { date: new Date("2022-01-03"), name: "Fed rate hike bear market", detail: "Aggressive hikes to fight inflation; Dow -20%" },
+  { date: new Date("2025-04-02"), name: "Liberation Day tariffs", detail: "Trump tariff announcement; sharp market selloff" },
 ]
 
 visibleEvents = events.filter(e => e.date >= dateRange.start && e.date <= dateRange.end)
