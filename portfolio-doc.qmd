@@ -5,11 +5,18 @@ execute:
   echo: false
 ---
 
-The following document serves as a way to document my own thought process towards constructing a portfolio starting with 100% cash. I am using this document to force myself to articulate in words why and how I am investing in the way I am, rather than just vibes.
+This document strives to be a starting point towards understanding how to build a portfolio. It's a way for me to learn as I write this, and for a resource others can use (shoutout Cristian and Diego).
+
+## Methodology
+
+There is a particular order we should follow in our portfolio construction process:
+1. Define our objectives
+
 
 ## Investment Objectives
 
 ### Primary goals
+
 These are non-negotiable.
 
 > "The stock market is a device for transferring money from the impatient to the patient" — Warren Buffet
@@ -572,7 +579,10 @@ This allocation also closely resembles that of the **LifePath** funds (commonly 
 - I am assuming to inject a fixed amount ($\sim \$500 – \$750$) into the portfolio every month
     - Rebalancing (adjusting portfolio allocation) should primarily happen through this mechanism, as opposed to selling stock
 - Max drawdown of $\textcolor{red}{-35\%}$
-    - How much of a fall am I genuinely able to stomach before I begin panic selling
+    - Means how much of a fall am I genuinely able to stomach before I begin panic selling
+- I only have access to the following asset classes:
+    - via Charles Schwab
+        - Equities
 - No use of (Charles Schwab's) margin at all
     - Schwab's margin rate sits between [$10.325\% – 11.825\%$](https://www.schwab.com/margin/margin-rates-and-requirements)
         - [Since 1957, the S&P 500 has a yearly average return of $10.56\%$ ($6.69\%$ when adjusted for inflation)](https://www.investopedia.com/ask/answers/042415/what-average-annual-return-sp-500.asp). That means your stock would need to outperform the market just to see a profit.
